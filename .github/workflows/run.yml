@@ -42,7 +42,7 @@ jobs:
           sudo hdiutil attach /tmp/Tahoe.dmg -noverify -mountpoint /Volumes/Tahoe
           sleep 10
           sudo /Applications/'Install macOS Tahoe'.app/Contents/Resources/createinstallmedia --volume /Volumes/Tahoe --nointeraction
-          sudo hdiutil detach -force /Volumes/Tahoe
+          sudo hdiutil detach -force /Volumes/Install macOS Tahoe
           sudo hdiutil convert /tmp/Tahoe.dmg -format UDTO -o ~/Desktop/tahoe.cdr
           mv ~/Desktop/tahoe.cdr ~/Desktop/tahoe.iso
       - name: Upload ISO image
