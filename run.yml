@@ -1,0 +1,54 @@
+
+name: Generate macOS Tahoe Recovery Image
+
+on:
+  workflow_dispatch:
+
+run-name: Generate macOS Tahoe Recovery Image
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: |
+          # Remove large, unused packages
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /Library/Android
+          
+          # Remove cached tools and user caches
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo rm -rf "$HOME/.cache"
+          
+          # Remove Xcode to free ~10–15GB
+          sudo rm -rf /Applications/Xcode.app
+          
+          # Clean temporary files
+          sudo rm -rf /tmp/*
+          
+          df -h
+      - name: Download macOS Installer
+        run: |
+          curl -L -o /tmp/InstallAssistant.pkg https://swcdn.apple.com/content/downloads/26/38/093-37779-A_Y4733G5GHI/adlxnkoqzyrrzfl1r5krg7ql0cod8vpl5e/InstallAssistant.pkg
+      - name: Install the assistant
+        run: |
+          sudo installer -pkg /tmp/InstallAssistant.pkg -target /
+      - name: Generate macOS Installer
+        run: |
+          sudo hdiutil create -o /tmp/Tahoe -size 20000m -volname 'Tahoe' -layout SPUD -fs HFS+J
+          sudo hdiutil attach /tmp/Tahoe.dmg -noverify -mountpoint /Volumes/Tahoe
+          sleep 10
+          sudo /Applications/'Install macOS Tahoe'.app/Contents/Resources/createinstallmedia --volume /Volumes/Tahoe --nointeraction
+          sudo hdiutil detach -force /Volumes/Tahoe
+          sudo hdiutil convert /tmp/Tahoe.dmg -format UDTO -o ~/Desktop/tahoe.cdr
+          mv ~/Desktop/tahoe.cdr ~/Desktop/tahoe.iso
+      - name: Upload ISO image
+        uses: actions/upload-artifact@v4
+        with:
+          name: tahoe.iso
+          path: /Desktop/tahoe.iso
+          compression-level: 9
