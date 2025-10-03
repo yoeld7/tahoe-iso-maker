@@ -1,4 +1,4 @@
-name: Generate macOS Tahoe Recovery Image
+name: Generate Latest macOS Tahoe ISO file
 
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
           df -h
       - name: Download macOS Installer
         run: |
-          curl -L -o /tmp/InstallAssistant.pkg https://swcdn.apple.com/content/downloads/26/38/093-37779-A_Y4733G5GHI/adlxnkoqzyrrzfl1r5krg7ql0cod8vpl5e/InstallAssistant.pkg
+          curl -L -o /tmp/InstallAssistant.pkg https://swcdn.apple.com/content/downloads/27/44/093-50844-A_ADFZL6MD5J/3p92a0vzjzewywyitfwajte1w5t8t4pzts/InstallAssistant.pkg
       - name: Install the assistant
         run: |
           sudo installer -pkg /tmp/InstallAssistant.pkg -target /
