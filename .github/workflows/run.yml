@@ -44,10 +44,10 @@ jobs:
           sudo /Applications/'Install macOS Tahoe'.app/Contents/Resources/createinstallmedia --volume /Volumes/Tahoe --nointeraction
           sudo hdiutil detach -force /Volumes/Install\ macOS\ Tahoe
           sudo hdiutil convert /tmp/Tahoe.dmg -format UDTO -o ~/Desktop/tahoe.cdr
-          mv ~/Desktop/tahoe.cdr ~/Desktop/tahoe.iso
+          mv ~/Users/runner/Desktop/tahoe.cdr ~/Users/runner/Desktop/tahoe.cdr
       - name: Upload ISO image
         uses: actions/upload-artifact@v4
         with:
           name: tahoe.iso
-          path: /Desktop/tahoe.iso
+          path: /Users/runner/Desktop/tahoe.cdr
           compression-level: 9
