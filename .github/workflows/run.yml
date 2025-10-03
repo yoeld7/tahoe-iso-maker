@@ -51,4 +51,3 @@ jobs:
         with:
           name: tahoe.iso
           path: /tmp/tahoe.iso
-          compression-level: 9
