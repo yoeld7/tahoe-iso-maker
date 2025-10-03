@@ -43,8 +43,8 @@ jobs:
           sleep 10
           sudo /Applications/'Install macOS Tahoe'.app/Contents/Resources/createinstallmedia --volume /Volumes/Tahoe --nointeraction
           sudo hdiutil detach -force /Volumes/Install\ macOS\ Tahoe
-          sudo hdiutil convert /tmp/Tahoe.dmg -format UDTO -o /tmp/tahoe.cdr
-          mv ~/tmp/tahoe.cdr ~/tmp/tahoe.cdr
+          sudo hdiutil convert /tmp/Tahoe.dmg -format UDTO -o /tmp/Tahoe.cdr
+          mv /tmp/tahoe.cdr /tmp/tahoe.cdr
       - name: Upload ISO image
         uses: actions/upload-artifact@v4
         with:
