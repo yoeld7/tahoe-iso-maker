@@ -3,7 +3,7 @@ name: Generate Latest macOS Tahoe ISO file
 on:
   workflow_dispatch:
 
-run-name: Generate macOS Tahoe Recovery Image
+run-name: Generate macOS Tahoe ISO file 
 
 jobs:
   build:
