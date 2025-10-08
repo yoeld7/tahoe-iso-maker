@@ -1,16 +1,17 @@
 name: Get list of installers macOS
 
 on:
-  workflow_dispach:
+  workflow_dispatch:
+  
 run-name: get list mac version from apple servers
 
 
 jobs:
   build:
-    run-on: macos-latest
+    runs-on: macos-latest
     steps:
-      -uses: action/checkout@v4
+      - uses: action/checkout@v4
       
       - name: get list version macOS
-        runs: |
+        run: |
           echo softwareupdate --list-full-installers
