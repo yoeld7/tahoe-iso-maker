@@ -1,0 +1,1 @@
+echo softwareupdate --list-full-installers
