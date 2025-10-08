@@ -14,4 +14,4 @@ jobs:
       
       - name: get list version macOS
         run: |
-          echo softwareupdate --list-full-installers
+          echo $(softwareupdate --list-full-installers)
