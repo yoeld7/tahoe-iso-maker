@@ -1,1 +1,16 @@
-echo softwareupdate --list-full-installers
+name: Get list of installers macOS
+
+on:
+  workflow_dispach:
+run-name: get list mac version from apple servers
+
+
+jobs:
+  build:
+    run-on: macos-latest
+    steps:
+      -uses: action/checkout@v4
+      
+      - name: get list version macOS
+        runs: |
+          echo softwareupdate --list-full-installers
