@@ -10,7 +10,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
       - name: Free up disk space
         run: |
           # Remove large, unused packages
@@ -30,12 +33,43 @@ jobs:
           sudo rm -rf /tmp/*
           
           df -h
-      - name: Verify host mac version
+      - name: Install Python dependencies
+        run: pip install requests
+      - name: Fetch latest macOS installer URL
+        id: macos
         run: |
-          echo "$(sw_vers -productName) Verion $(sw_vers -productVersion) build $(sw_vers -buildVersion)"
+          python <<'PYCODE'
+          import requests, plistlib, gzip, io
+
+          def get_latest_macos_info():
+              data = requests.get("https://gdmf.apple.com/v2/pmv").json()
+              macos = data["PublicAssetSets"]["macOS"]
+              pub = [r for r in macos if r.get("ReleaseType") == "Public"]
+              latest = sorted(pub, key=lambda x: x["PostingDate"], reverse=True)[0]
+              return latest["ProductVersion"]
+
+          def get_swcdn_link(version):
+              major = version.split(".")[0]
+              url = f"https://swcatalog.apple.com/content/catalogs/others/index-{major}.sucatalog.gz"
+              resp = requests.get(url)
+              catalog = plistlib.load(gzip.GzipFile(fileobj=io.BytesIO(resp.content)))
+
+              for p in catalog["Products"].values():
+                  meta = p.get("ExtendedMetaInfo", {})
+                  if meta.get("ProductName", "").startswith("macOS") and meta.get("ProductVersion", "").startswith(version):
+                      for pkg in p.get("Packages", []):
+                          u = pkg.get("URL", "")
+                          if "swcdn.apple.com" in u:
+                              print(f"::set-output name=macos_url::{u}")
+                              exit(0)
+              exit(1)
+
+          get_swcdn_link(get_latest_macos_info())
+          PYCODE
+          
       - name: Download macOS Installer
         run: |
-          curl -L -o /tmp/InstallAssistant.pkg https://swcdn.apple.com/content/downloads/27/44/093-50844-A_ADFZL6MD5J/3p92a0vzjzewywyitfwajte1w5t8t4pzts/InstallAssistant.pkg
+          curl -L -o /tmp/InstallAssistant.pkg "${{ steps.macos.outputs.macos_url }}"
       - name: Install the assistant
         run: |
           sudo installer -pkg /tmp/InstallAssistant.pkg -target /
